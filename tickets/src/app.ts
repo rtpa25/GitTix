@@ -1,6 +1,7 @@
-import { errorHandler, NotFoundError } from '@rp-gittix/common';
+import { currentUser, errorHandler, NotFoundError } from '@rp-gittix/common';
 import cookieSession from 'cookie-session';
 import express from 'express';
+import { createTicketRouter } from './routes/new';
 
 const app = express();
 
@@ -14,6 +15,10 @@ app.use(
         secure: process.env.NODE_ENV !== 'test',
     })
 );
+
+app.use(currentUser);
+
+app.use(createTicketRouter);
 
 app.all('*', async (req, res, next) => {
     throw new NotFoundError();
