@@ -1,8 +1,8 @@
+import { validateRequest, BadRequestError } from '@rp-gittix/common';
 import { Request, Response, Router } from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
-import { BadRequestError } from '../errors/bad-request-error';
-import { validateRequest } from '../middlewares/validate-request';
+
 import { User, UserAttrs } from '../models/user';
 
 const router = Router();

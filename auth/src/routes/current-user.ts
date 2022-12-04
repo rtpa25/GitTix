@@ -1,5 +1,5 @@
+import { currentUser } from '@rp-gittix/common';
 import { Request, Response, Router } from 'express';
-import { currentUser } from '../middlewares/current-user';
 
 const router = Router();
 
