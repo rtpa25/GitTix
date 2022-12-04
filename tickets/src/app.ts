@@ -1,7 +1,10 @@
 import { currentUser, errorHandler, NotFoundError } from '@rp-gittix/common';
 import cookieSession from 'cookie-session';
 import express from 'express';
+import { indexTicketsRouter } from './routes';
 import { createTicketRouter } from './routes/new';
+import { showTicketRouter } from './routes/show';
+import { updateTicketRouter } from './routes/update';
 
 const app = express();
 
@@ -19,6 +22,9 @@ app.use(
 app.use(currentUser);
 
 app.use(createTicketRouter);
+app.use(showTicketRouter);
+app.use(indexTicketsRouter);
+app.use(updateTicketRouter);
 
 app.all('*', async (req, res, next) => {
     throw new NotFoundError();

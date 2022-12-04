@@ -11,7 +11,7 @@ router.post(
     [
         body('title')
             .isString()
-            .withMessage('Email must be valid')
+            .withMessage('title must be valid')
             .notEmpty()
             .withMessage('title is required'),
         body('price')
