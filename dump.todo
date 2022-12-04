@@ -1,7 +1,0 @@
-[x] revise whatever you have learnt about kubernetes and microservices
-[x] switch to personal kubernetes cluster and delete the GCP one and delete the account and billing info for no scope of billing
-    [x] delete the ticketing-dev project from GCP    
-    [x] switch to personal kubernetes cluster in yaml files
-[x] get the existing infra up and running 
-[] complete the react app module
-[] complete the code sharing module
