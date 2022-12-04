@@ -25,3 +25,11 @@ build:
           - "**/*.ts"
           - "**/*.tsx"
           - "**/*.css"
+    - image: rtpa25/tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: . #thrown into the container
