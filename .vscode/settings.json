@@ -1,0 +1,15 @@
+{
+    "cSpell.words": [
+        "currentuser",
+        "depl",
+        "proxied",
+        "rtpa",
+        "signin",
+        "signout",
+        "Signup",
+        "skaffold"
+    ],
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/GoogleContainerTools/skaffold/main/docs-v2/content/en/schemas/v3.json": "file:///d%3A/new_portfolio_projs/ticketing/skaffold.yaml"
+    }
+}
