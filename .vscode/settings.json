@@ -3,6 +3,7 @@
         "currentuser",
         "depl",
         "gittix",
+        "nats",
         "proxied",
         "rtpa",
         "signin",

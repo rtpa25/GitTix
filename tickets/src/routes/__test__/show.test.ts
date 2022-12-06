@@ -5,7 +5,8 @@ import { app } from '../../app';
 it('returns a 404 if the ticket is not found', async () => {
     const ticketId = new mongoose.Types.ObjectId();
 
-    await request(app).get(`/api/tickets/${ticketId}`).send().expect(404);
+    const res = await request(app).get(`/api/tickets/${ticketId}`).send();
+    expect(res.statusCode).toEqual(404);
 });
 
 it('returns the ticket if the ticket is found', async () => {
