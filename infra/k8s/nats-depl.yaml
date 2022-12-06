@@ -15,8 +15,7 @@ spec:
       containers:
         - name: nats
           image: nats-streaming:0.25.2
-          args:
-            [
+          args: [
               "-p",
               "4222",
               "-m",
@@ -28,7 +27,7 @@ spec:
               "-hbf",
               "2",
               "-SD",
-              "-cid",
+              "-cid", # cluster id
               "ticketing",
             ]
 ---

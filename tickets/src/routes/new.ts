@@ -1,7 +1,9 @@
 import { requireAuth, validateRequest } from '@rp-gittix/common';
 import { Request, Response, Router } from 'express';
 import { body } from 'express-validator';
+import { TicketCreatePublisher } from '../events/publishers/ticket-created-publisher';
 import { Ticket } from '../model/ticket';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = Router();
 
@@ -31,6 +33,14 @@ router.post(
             title,
             userId: req.currentUser!.id,
         });
+
+        await new TicketCreatePublisher(natsWrapper.client).publish({
+            id: ticket.id,
+            price: ticket.price,
+            title: ticket.title,
+            userId: ticket.userId,
+        });
+
         res.status(201).send(ticket);
     }
 );

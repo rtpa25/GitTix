@@ -7,6 +7,7 @@ declare global {
 }
 
 let mongo: MongoMemoryServer;
+jest.mock('../nats-wrapper');
 
 global.signin = () => {
     // Build a JWT payload. { id, email }
@@ -35,6 +36,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+    jest.clearAllMocks();
     const collections = await mongoose.connection.db.collections();
 
     for (let collection of collections) {

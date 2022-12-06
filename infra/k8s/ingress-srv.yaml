@@ -24,6 +24,13 @@ spec:
                 name: tickets-srv
                 port:
                   number: 3000
+          - path: /api/orders/?(.*) #any request with this structure of the req url will go the auth-srv
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-srv
+                port:
+                  number: 3000
           - path: /?(.*) #any request with this structure of the req url will go the client-srv
             pathType: Prefix
             backend:
