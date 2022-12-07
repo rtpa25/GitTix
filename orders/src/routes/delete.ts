@@ -1,7 +1,9 @@
 import { NotFoundError, requireAuth, validateRequest } from '@rp-gittix/common';
 import { Request, Response, Router } from 'express';
 import { param } from 'express-validator';
+import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-publisher';
 import { Order, OrderStatus } from '../model/order';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = Router();
 
@@ -17,7 +19,7 @@ router.delete(
         const order = await Order.findOne({
             userId,
             _id: req.params.orderId,
-        });
+        }).populate('ticket');
 
         if (!order) {
             throw new NotFoundError();
@@ -28,6 +30,12 @@ router.delete(
         await order.save();
 
         //TODO: Publish an event saying that an order was cancelled
+        new OrderCancelledPublisher(natsWrapper.client).publish({
+            id: order.id,
+            ticket: {
+                id: order.ticket.id,
+            },
+        });
 
         //Send the order back to the user
         res.send(order);

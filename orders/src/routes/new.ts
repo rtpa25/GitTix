@@ -6,8 +6,10 @@ import {
 } from '@rp-gittix/common';
 import { Request, Response, Router } from 'express';
 import { body } from 'express-validator';
+import { OrderCreatedPublisher } from '../events/publishers/order-created-publisher';
 import { Order, OrderStatus } from '../model/order';
 import { Ticket } from '../model/ticket';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = Router();
 
@@ -49,7 +51,7 @@ router.post(
         const expirationTime = Date.now() + EXPIRATION_WINDOW_SECONDS * 1000; // 15 minutes
 
         // Build the order and save it to the database
-        const newOrder = await Order.create({
+        const order = await Order.create({
             userId: req.currentUser!.id,
             status: OrderStatus.Created,
             expiresAt: expirationTime,
@@ -57,9 +59,19 @@ router.post(
         });
 
         //TODO: Publish an event saying that an order was created
+        new OrderCreatedPublisher(natsWrapper.client).publish({
+            id: order.id,
+            status: order.status,
+            userId: order.userId,
+            expiresAt: order.expiresAt.toISOString(),
+            ticket: {
+                id: ticket.id,
+                price: ticket.price,
+            },
+        });
 
         // Send back the order
-        res.status(201).send(newOrder);
+        res.status(201).send(order);
     }
 );
 
