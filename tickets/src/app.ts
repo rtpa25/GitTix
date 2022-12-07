@@ -1,6 +1,8 @@
 import { currentUser, errorHandler, NotFoundError } from '@rp-gittix/common';
 import cookieSession from 'cookie-session';
 import express from 'express';
+import 'express-async-errors';
+
 import { indexTicketsRouter } from './routes';
 import { createTicketRouter } from './routes/new';
 import { showTicketRouter } from './routes/show';

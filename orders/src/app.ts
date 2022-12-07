@@ -1,6 +1,12 @@
 import { currentUser, errorHandler, NotFoundError } from '@rp-gittix/common';
 import cookieSession from 'cookie-session';
 import express from 'express';
+import 'express-async-errors';
+
+import { indexOrderRouter } from './routes';
+import { deleteOrderRouter } from './routes/delete';
+import { newOrderRouter } from './routes/new';
+import { showOrderRouter } from './routes/show';
 
 const app = express();
 
@@ -16,6 +22,11 @@ app.use(
 );
 
 app.use(currentUser);
+
+app.use(indexOrderRouter);
+app.use(newOrderRouter);
+app.use(showOrderRouter);
+app.use(deleteOrderRouter);
 
 app.all('*', async (req, res, next) => {
     throw new NotFoundError();
