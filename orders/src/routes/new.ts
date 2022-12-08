@@ -58,7 +58,7 @@ router.post(
             ticket: ticket,
         });
 
-        //TODO: Publish an event saying that an order was created
+        // Publish an event saying that an order was created
         new OrderCreatedPublisher(natsWrapper.client).publish({
             id: order.id,
             status: order.status,

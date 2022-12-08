@@ -1290,10 +1290,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@rp-gittix/common@^1.0.17":
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/@rp-gittix/common/-/common-1.0.17.tgz#3c3379201d0a27e838a0ae636930a526eb0435c7"
-  integrity sha512-ZO6skkFHHCNHtKicVinJElhRgJYV7b02y2tB1+z/vPOq1Lg9aLj7pfJA0rcctWa2YieM69qeNjXZqmw0Fz59bg==
+"@rp-gittix/common@^1.0.18":
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/@rp-gittix/common/-/common-1.0.18.tgz#0b3d204df0f5d76c7aeb3cc29678311ec30517a2"
+  integrity sha512-K2CYhYSt/dwBQs6Q7jFCm3+lzw978GceBRwu+MSLhrFk9zEoVr9sfBpWORiGeNneTIpE410GurBTUD6cuElIbQ==
   dependencies:
     "@types/cookie-session" "^2.0.44"
     "@types/express" "^4.17.14"
