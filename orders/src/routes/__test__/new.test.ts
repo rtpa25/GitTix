@@ -18,7 +18,7 @@ it('returns an error if the ticket does not exist', async () => {
 it('returns an error if the ticket is already reserved', async () => {
     const ticket = await global.buildTicket();
 
-    const order = await Order.create({
+    await Order.create({
         ticket,
         userId: '123',
         status: OrderStatus.Created,

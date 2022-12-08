@@ -1,5 +1,7 @@
 import { OrderStatus } from '@rp-gittix/common';
 import mongoose from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
+
 import { TicketDoc } from './ticket';
 
 export { OrderStatus }; // to have one source for everything order related in the entire micro service
@@ -14,6 +16,7 @@ interface OrderAttrs {
 interface OrderDoc extends mongoose.Document {
     userId: string;
     status: OrderStatus;
+    version: number;
     expiresAt: Date;
     ticket: TicketDoc;
     createdAt: string;
@@ -55,6 +58,9 @@ const orderSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+
+orderSchema.set('versionKey', 'version');
+orderSchema.plugin(updateIfCurrentPlugin);
 
 orderSchema.statics.build = (attrs: OrderAttrs) => {
     return new Order(attrs);

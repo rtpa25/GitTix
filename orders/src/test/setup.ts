@@ -5,11 +5,7 @@ import { Ticket, TicketDoc } from '../model/ticket';
 
 declare global {
     var signin: () => string[];
-    var buildTicket: () => Promise<
-        TicketDoc & {
-            _id: Types.ObjectId;
-        }
-    >;
+    var buildTicket: () => Promise<TicketDoc>;
 }
 
 let mongo: MongoMemoryServer;
@@ -34,10 +30,13 @@ global.signin = () => {
 };
 
 global.buildTicket = async () => {
-    return Ticket.create({
+    const ticket = Ticket.build({
         title: 'concert',
         price: 20,
+        id: new Types.ObjectId().toHexString(),
     });
+    await ticket.save();
+    return ticket;
 };
 
 beforeAll(async () => {
