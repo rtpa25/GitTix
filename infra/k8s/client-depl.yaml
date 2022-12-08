@@ -1,4 +1,3 @@
-#deployment "auth" created
 apiVersion: apps/v1
 kind: Deployment
 metadata:

@@ -13,7 +13,7 @@ import { natsWrapper } from '../nats-wrapper';
 
 const router = Router();
 
-const EXPIRATION_WINDOW_SECONDS = 15 * 60; // 15 minutes
+const EXPIRATION_WINDOW_SECONDS = 1 * 60; // 15 minutes
 
 interface RequestBody {
     ticketId: string;

@@ -15,9 +15,11 @@
     "yaml.schemas": {
         "https://raw.githubusercontent.com/GoogleContainerTools/skaffold/main/docs-v2/content/en/schemas/v3.json": "file:///d%3A/new_portfolio_projs/ticketing/skaffold.yaml",
         "kubernetes://schema/v1%40service": [
-            "file:///d%3A/new_portfolio_projs/ticketing/infra/k8s/nats-depl.yaml",
-            "file:///d%3A/new_portfolio_projs/ticketing/infra/k8s/tickets-depl.yaml"
+            "file:///d%3A/new_portfolio_projs/ticketing/infra/k8s/nats-depl.yaml"
         ],
-        "https://json.schemastore.org/yamllint.json": "file:///d%3A/new_portfolio_projs/ticketing/infra/k8s/orders-mongo-depl.yaml"
+        "https://json.schemastore.org/yamllint.json": [
+            "file:///d%3A/new_portfolio_projs/ticketing/infra/k8s/orders-mongo-depl.yaml",
+            "file:///d%3A/new_portfolio_projs/ticketing/infra/k8s/tickets-depl.yaml"
+        ]
     }
 }
