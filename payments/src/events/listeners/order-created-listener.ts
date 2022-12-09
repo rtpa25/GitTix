@@ -1,6 +1,6 @@
 import { Listener, OrderCreatedEvent, Subjects } from '@rp-gittix/common';
 import { Message } from 'node-nats-streaming';
-import { expirationQueue } from '../../queues/expiration-queue';
+import { Order } from '../../models/order';
 import { queueGroupName } from './queue-group-name';
 
 export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
@@ -10,20 +10,18 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
         data: OrderCreatedEvent['data'],
         msg: Message
     ): Promise<void> {
-        const { id } = data;
-        const delay = new Date(data.expiresAt).getTime() - new Date().getTime();
-        console.log(
-            'Waiting this many milliseconds to process the job:',
-            delay
-        );
-        await expirationQueue.add(
-            {
-                orderId: id,
-            },
-            {
-                delay,
-            }
-        );
+        const { id, status, ticket, userId, version } = data;
+
+        const order = Order.build({
+            id,
+            status,
+            price: ticket.price,
+            userId,
+            version,
+        });
+
+        await order.save();
+
         msg.ack();
     }
 }
