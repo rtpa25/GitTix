@@ -55,11 +55,21 @@ const Signup: NextPage = () => {
                 SIGN UP
             </Heading>
             <Formik
-                initialValues={{ password: '', email: '' }}
+                initialValues={{ username: '', password: '', email: '' }}
                 onSubmit={async (values, { setErrors }) => {}}>
                 {({ isSubmitting }) => (
                     <Box mx={'10%'}>
                         <Form>
+                            <Box mt={4}>
+                                <InputField
+                                    name={'username'}
+                                    placeholder={'username'}
+                                    label={'Username'}
+                                    type={'text'}
+                                    isPassword={false}
+                                    showFormLabel={true}
+                                />
+                            </Box>
                             <Box mt={4}>
                                 <InputField
                                     name={'email'}

@@ -11,6 +11,8 @@ it('fetches a specific order for a particular user', async () => {
         .send({ ticketId: ticket.id })
         .expect(201);
 
+    console.log(order);
+
     const response = await request(app)
         .get(`/api/orders/${order.id}`)
         .set('Cookie', user)

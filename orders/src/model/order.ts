@@ -8,6 +8,7 @@ export { OrderStatus }; // to have one source for everything order related in th
 
 interface OrderAttrs {
     userId: string;
+    creator: string;
     status: OrderStatus;
     expiresAt: Date;
     ticket: TicketDoc;
@@ -15,6 +16,7 @@ interface OrderAttrs {
 
 interface OrderDoc extends mongoose.Document {
     userId: string;
+    creator: string;
     status: OrderStatus;
     version: number;
     expiresAt: Date;
@@ -30,6 +32,10 @@ interface OrderModel extends mongoose.Model<OrderDoc> {
 const orderSchema = new mongoose.Schema(
     {
         userId: {
+            type: String,
+            required: true,
+        },
+        creator: {
             type: String,
             required: true,
         },

@@ -72,6 +72,7 @@ router.put(
             title: ticket.title,
             userId: ticket.userId,
             version: ticket.version,
+            creator: ticket.creator,
         });
 
         return res.status(200).send(ticket);

@@ -10,7 +10,7 @@
     },
     "description": "auth service is a micro service and is the part of the ticketing app that controls the users data source of the app and there entry and operations in the entire ticketing app",
     "dependencies": {
-        "@rp-gittix/common": "^1.0.9",
+        "@rp-gittix/common": "^1.0.21",
         "@swc/core": "^1.2.62",
         "@swc/wasm": "^1.2.62",
         "@types/cookie-session": "^2.0.44",

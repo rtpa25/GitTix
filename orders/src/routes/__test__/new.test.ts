@@ -18,12 +18,15 @@ it('returns an error if the ticket does not exist', async () => {
 it('returns an error if the ticket is already reserved', async () => {
     const ticket = await global.buildTicket();
 
-    await Order.create({
+    const order = Order.build({
         ticket,
         userId: '123',
         status: OrderStatus.Created,
         expiresAt: new Date(),
+        creator: 'test',
     });
+
+    await order.save();
 
     const res = await request(app)
         .post('/api/orders')

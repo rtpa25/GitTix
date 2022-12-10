@@ -11,6 +11,12 @@ router.post(
     '/api/users/signup',
     [
         body('email').isEmail().withMessage('Email must be valid'),
+        body('username')
+            .trim()
+            .notEmpty()
+            .withMessage('Username must be valid')
+            .isLength({ min: 2, max: 20 })
+            .withMessage('Username must be between 2 and 20 characters'),
         body('password')
             .trim()
             .isLength({ min: 4, max: 20 })
@@ -18,10 +24,12 @@ router.post(
     ],
     validateRequest,
     async (req: Request<{}, {}, UserAttrs>, res: Response) => {
-        const { email, password } = req.body;
+        const { email, password, username } = req.body;
 
-        if (!email || !password) {
-            throw new BadRequestError('Email or password not provided');
+        if (!email || !password || !username) {
+            throw new BadRequestError(
+                'Email or password or username not provided'
+            );
         }
 
         const existingUser = await User.findOne({ email });
@@ -30,13 +38,14 @@ router.post(
             throw new BadRequestError('Email in use');
         }
 
-        const user = await User.build({ email, password }).save();
+        const user = await User.build({ email, password, username }).save();
 
         //Generate JWT
         const userJwt = jwt.sign(
             {
                 id: user.id,
                 email: user.email,
+                username: user.username,
             },
             process.env.JWT_KEY!
         );

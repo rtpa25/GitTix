@@ -12,6 +12,7 @@ const setup = async () => {
         title: 'concert',
         price: 99,
         userId: new mongoose.Types.ObjectId().toHexString(),
+        creator: 'test',
     });
     await ticket.save();
     //Create a fake data object

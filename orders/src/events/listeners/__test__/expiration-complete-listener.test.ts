@@ -22,6 +22,7 @@ const setup = async () => {
         expiresAt: new Date(),
         userId: new mongoose.Types.ObjectId().toHexString(),
         ticket,
+        creator: 'test',
     });
 
     await order.save();

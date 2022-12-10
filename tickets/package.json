@@ -10,7 +10,7 @@
     },
     "description": "tickets service is a micro service and is the part of the ticketing app that controls the crud operations of tickets",
     "dependencies": {
-        "@rp-gittix/common": "^1.0.20",
+        "@rp-gittix/common": "^1.0.22",
         "@swc/core": "^1.3.21",
         "@swc/wasm": "^1.3.21",
         "@types/cookie-session": "^2.0.44",

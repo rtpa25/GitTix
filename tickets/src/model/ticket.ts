@@ -5,12 +5,14 @@ export interface TicketAttrs {
     title: string;
     price: number;
     userId: string;
+    creator: string;
 }
 
 interface TicketDoc extends mongoose.Document {
     title: string;
     price: number;
     userId: string;
+    creator: string;
     version: number;
     orderId?: string;
     createdAt: string;
@@ -32,6 +34,10 @@ const ticketSchema = new mongoose.Schema(
             required: true,
         },
         userId: {
+            type: String,
+            required: true,
+        },
+        creator: {
             type: String,
             required: true,
         },

@@ -13,7 +13,7 @@ import { natsWrapper } from '../nats-wrapper';
 
 const router = Router();
 
-const EXPIRATION_WINDOW_SECONDS = 1 * 60; // 15 minutes
+const EXPIRATION_WINDOW_SECONDS = 15 * 60; // 15 minutes
 
 interface RequestBody {
     ticketId: string;
@@ -48,15 +48,20 @@ router.post(
         }
 
         // Calculate an expiration date for this order
-        const expirationTime = Date.now() + EXPIRATION_WINDOW_SECONDS * 1000; // 15 minutes
+        const expirationTime = new Date(
+            Date.now() + EXPIRATION_WINDOW_SECONDS * 1000
+        ); // 15 minutes
 
         // Build the order and save it to the database
-        const order = await Order.create({
+        const order = Order.build({
             userId: req.currentUser!.id,
             status: OrderStatus.Created,
             expiresAt: expirationTime,
             ticket: ticket,
+            creator: req.currentUser!.username,
         });
+
+        await order.save();
 
         // Publish an event saying that an order was created
         new OrderCreatedPublisher(natsWrapper.client).publish({
