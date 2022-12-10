@@ -1,7 +1,9 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { IncomingMessage } from 'node:http';
 
-export const buildClient = (req: IncomingMessage | undefined) => {
+export const buildClient = (
+    req?: IncomingMessage | undefined
+): AxiosInstance => {
     if (typeof window === 'undefined') {
         return axios.create({
             baseURL:
