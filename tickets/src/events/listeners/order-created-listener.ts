@@ -31,6 +31,7 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
             version: existingTicket.version,
             orderId: existingTicket.orderId,
             creator: existingTicket.creator,
+            imageUrl: existingTicket.imageUrl,
         });
         // Ack the message
         msg.ack();

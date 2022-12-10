@@ -13,6 +13,7 @@ const setup = async () => {
         price: 99,
         userId: new mongoose.Types.ObjectId().toHexString(),
         creator: 'test',
+        imageUrl: 'test',
     });
     await ticket.save();
     //Create a fake data object

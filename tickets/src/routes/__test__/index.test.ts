@@ -8,6 +8,7 @@ const createTicket = () => {
         .send({
             title: 'concert',
             price: 20,
+            imageUrl: 'https://www.google.com',
         });
 };
 

@@ -35,6 +35,7 @@ global.buildTicket = async () => {
         title: 'concert',
         price: 20,
         id: new Types.ObjectId().toHexString(),
+        imageUrl: 'test',
     });
     await ticket.save();
     return ticket;

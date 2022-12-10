@@ -13,6 +13,7 @@ const setup = async () => {
         title: 'concert',
         price: 20,
         id: new mongoose.Types.ObjectId().toHexString(),
+        imageUrl: 'test',
     });
 
     await ticket.save();

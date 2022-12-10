@@ -13,6 +13,7 @@ it('returns a 404 if the provided id does not exist', async () => {
         .send({
             title: 'concert',
             price: 20,
+            imageUrl: 'https://www.google.com',
         });
     expect(res.statusCode).toEqual(404);
 });
@@ -23,6 +24,7 @@ it('returns a 401 if the user is not authenticated', async () => {
     const res = await request(app).put(`/api/tickets/${id}`).send({
         title: 'concert',
         price: 20,
+        imageUrl: 'https://www.google.com',
     });
     expect(res.statusCode).toEqual(401);
 });
@@ -34,6 +36,7 @@ it('returns a 401 if the user does not own the ticket', async () => {
         .send({
             title: 'concert',
             price: 20,
+            imageUrl: 'https://www.google.com',
         });
 
     const res = await request(app)
@@ -42,6 +45,7 @@ it('returns a 401 if the user does not own the ticket', async () => {
         .send({
             title: 'new concert',
             price: 1000,
+            imageUrl: 'https://www.google.com',
         });
     expect(res.statusCode).toEqual(401);
 });
@@ -85,6 +89,7 @@ it('updates the ticket provided valid inputs', async () => {
         .send({
             title: 'concert',
             price: 20,
+            imageUrl: 'https://www.google.com',
         });
 
     await request(app)
@@ -93,6 +98,7 @@ it('updates the ticket provided valid inputs', async () => {
         .send({
             title: 'new concert',
             price: 1000,
+            imageUrl: 'https://www.google.com',
         })
         .expect(200);
 
@@ -111,8 +117,9 @@ it('publishes an event', async () => {
         .post('/api/tickets')
         .set('Cookie', cookie)
         .send({
-            title: 'asldkfj',
+            title: 'new concert',
             price: 20,
+            imageUrl: 'https://www.google.com',
         });
 
     await request(app)
@@ -121,6 +128,7 @@ it('publishes an event', async () => {
         .send({
             title: 'new title',
             price: 100,
+            imageUrl: 'https://www.google.com',
         })
         .expect(200);
 
@@ -136,6 +144,7 @@ it('rejects updates if the ticket is reserved', async () => {
         .send({
             title: 'concert',
             price: 20,
+            imageUrl: 'https://www.google.com',
         });
 
     const ticket = await Ticket.findById(response.body.id);
@@ -148,6 +157,7 @@ it('rejects updates if the ticket is reserved', async () => {
         .send({
             title: 'new concert',
             price: 30,
+            imageUrl: 'https://www.google.com',
         })
         .expect(400);
 });

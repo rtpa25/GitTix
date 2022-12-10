@@ -30,6 +30,7 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
             version: reservedTicket.version,
             orderId: reservedTicket.orderId,
             creator: reservedTicket.creator,
+            imageUrl: reservedTicket.imageUrl,
         }); // Publish the updated ticket
         // Ack the message
         msg.ack();

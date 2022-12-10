@@ -14,6 +14,12 @@ import { natsWrapper } from '../nats-wrapper';
 
 const router = Router();
 
+interface TicketBody {
+    price: number;
+    title: string;
+    imageUrl: string;
+}
+
 router.put(
     '/api/tickets/:id',
     requireAuth,
@@ -28,19 +34,14 @@ router.put(
             .withMessage('price must be valid')
             .notEmpty()
             .withMessage('price is required'),
+        body('imageUrl')
+            .isString()
+            .withMessage('imageUrl must be valid')
+            .notEmpty()
+            .withMessage('imageUrl is required'),
     ],
     validateRequest,
-    async (
-        req: Request<
-            { id: string },
-            {},
-            {
-                title: string;
-                price: number;
-            }
-        >,
-        res: Response
-    ) => {
+    async (req: Request<{ id: string }, {}, TicketBody>, res: Response) => {
         const ticketId = req.params.id;
         if (!mongoose.isValidObjectId(ticketId)) {
             throw new NotFoundError();
@@ -59,9 +60,12 @@ router.put(
             throw new NotAuthorizedError();
         }
 
+        const { imageUrl, price, title } = req.body;
+
         ticket.set({
-            title: req.body.title,
-            price: req.body.price,
+            title,
+            price,
+            imageUrl,
         });
 
         await ticket.save();
@@ -73,6 +77,7 @@ router.put(
             userId: ticket.userId,
             version: ticket.version,
             creator: ticket.creator,
+            imageUrl: ticket.imageUrl,
         });
 
         return res.status(200).send(ticket);

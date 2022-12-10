@@ -7,6 +7,12 @@ import { natsWrapper } from '../nats-wrapper';
 
 const router = Router();
 
+interface TicketBody {
+    price: number;
+    title: string;
+    imageUrl: string;
+}
+
 router.post(
     '/api/tickets',
     requireAuth,
@@ -21,18 +27,21 @@ router.post(
             .withMessage('price must be valid')
             .notEmpty()
             .withMessage('price is required'),
+        body('imageUrl')
+            .isString()
+            .withMessage('imageUrl must be valid')
+            .notEmpty()
+            .withMessage('imageUrl is required'),
     ],
     validateRequest,
-    async (
-        req: Request<{}, {}, { price: number; title: string }>,
-        res: Response
-    ) => {
-        const { price, title } = req.body;
+    async (req: Request<{}, {}, TicketBody>, res: Response) => {
+        const { price, title, imageUrl } = req.body;
         const ticket = Ticket.build({
             price,
             title,
             userId: req.currentUser!.id,
             creator: req.currentUser!.username,
+            imageUrl,
         });
 
         await ticket.save();
@@ -44,6 +53,7 @@ router.post(
             userId: ticket.userId,
             version: ticket.version,
             creator: ticket.creator,
+            imageUrl: ticket.imageUrl,
         });
 
         res.status(201).send(ticket);

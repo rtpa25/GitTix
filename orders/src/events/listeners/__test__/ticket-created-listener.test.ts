@@ -16,6 +16,7 @@ const setup = async () => {
         price: 20,
         userId: new mongoose.Types.ObjectId().toHexString(),
         creator: 'test',
+        imageUrl: 'test',
     };
     // Create a fake message object
     // @ts-ignore
