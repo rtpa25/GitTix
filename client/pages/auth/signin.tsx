@@ -1,7 +1,6 @@
 import { Box, Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import { NextPage } from 'next';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import InputField from '../../components/input-field';
@@ -97,9 +96,11 @@ const Signin: NextPage = () => {
                                 </Button>
                                 <Text color={'gray.400'}>
                                     {"Don't Have an account?"}{' '}
-                                    <NextLink href={'/auth/signup'}>
-                                        <Link color={TEXT_COLOR}>Signup</Link>
-                                    </NextLink>
+                                    <Link
+                                        color={TEXT_COLOR}
+                                        href={'/auth/signup'}>
+                                        Signup
+                                    </Link>
                                 </Text>
                             </Flex>
                         </Form>

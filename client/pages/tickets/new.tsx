@@ -8,7 +8,6 @@ import {
     Text,
 } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import InputField from '../../components/input-field';
@@ -136,9 +135,9 @@ const NewTicket = () => {
                                 </Button>
                                 <Text color={'gray.400'}>
                                     Changed your mind?{' '}
-                                    <NextLink href={'/'}>
-                                        <Link color={TEXT_COLOR}>Home</Link>
-                                    </NextLink>
+                                    <Link color={TEXT_COLOR} href={'/'}>
+                                        Home
+                                    </Link>
                                 </Text>
                             </Flex>
                         </Form>

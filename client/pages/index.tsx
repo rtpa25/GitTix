@@ -8,27 +8,11 @@ import {
     Th,
     Thead,
     Tr,
+    Link,
 } from '@chakra-ui/react';
-import { NextPageContext } from 'next';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { TEXT_COLOR } from '../consts';
 
-const Home = ({ tickets }: any) => {
-    const router = useRouter();
-
-    const ticketList = tickets.map((ticket: any) => {
-        return (
-            <tr key={ticket.id}>
-                <td>{ticket.title}</td>
-                <td>{ticket.price}</td>
-                <td>
-                    <Link href={`/tickets/${ticket.id}`}>View</Link>
-                </td>
-            </tr>
-        );
-    });
-
+const Home = () => {
     return (
         <TableContainer m={['0', '3', '6', '10']}>
             <Table textColor={'white'}>
@@ -80,16 +64,6 @@ const Home = ({ tickets }: any) => {
             </Table>
         </TableContainer>
     );
-};
-
-Home.getInitialProps = async (
-    context: NextPageContext,
-    client: any,
-    currentUser: any
-): Promise<any> => {
-    const { data } = await client.get('/api/tickets');
-
-    return { tickets: data };
 };
 
 export default Home;

@@ -10,12 +10,7 @@ import {
 import { useField } from 'formik';
 import { FC, InputHTMLAttributes, useState } from 'react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import {
-    BG_COLOR,
-    BG_COLOR_DARKER,
-    BG_COLOR_DARKEST,
-    TEXT_COLOR,
-} from '../consts';
+import { BG_COLOR, TEXT_COLOR } from '../consts';
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
     name: string;

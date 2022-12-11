@@ -41,10 +41,10 @@ const Header: FC<HeaderProps> = ({ currentUser }) => {
                         if (!link) return null;
                         return (
                             <Box key={link.label} mx='3' color={TEXT_COLOR}>
-                                <Link fontSize={['sm', 'md', 'lg']}>
-                                    <NextLink href={link.href}>
-                                        {link.label}
-                                    </NextLink>
+                                <Link
+                                    fontSize={['sm', 'md', 'lg']}
+                                    href={link.href}>
+                                    {link.label}
                                 </Link>
                             </Box>
                         );
