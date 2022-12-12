@@ -10,9 +10,27 @@ import {
     Tr,
     Link,
 } from '@chakra-ui/react';
+import { NextPage, NextPageContext } from 'next';
+import { buildClient } from '../api/build-client';
 import { TEXT_COLOR } from '../consts';
+import { Ticket } from '../types/ticket';
 
-const Home = () => {
+const Home: NextPage<{ tickets: Ticket[] }> = ({ tickets }) => {
+    console.log(tickets);
+
+    const ticketList = tickets.map((ticket) => {
+        return (
+            <Tr key={ticket.id}>
+                <Td>{ticket.title}</Td>
+                <Td>${ticket.price}</Td>
+                <Td>{ticket.username}</Td>
+                <Td color={TEXT_COLOR}>
+                    <Link href={`/tickets/${ticket.id}`}>View</Link>
+                </Td>
+            </Tr>
+        );
+    });
+
     return (
         <TableContainer m={['0', '3', '6', '10']}>
             <Table textColor={'white'}>
@@ -27,32 +45,7 @@ const Home = () => {
                         <Th>View Ticket</Th>
                     </Tr>
                 </Thead>
-                <Tbody>
-                    <Tr>
-                        <Td>Concert01</Td>
-                        <Td>$20</Td>
-                        <Td>Ronit</Td>
-                        <Td color={TEXT_COLOR}>
-                            <Link href={`/tickets/asdsd`}>View</Link>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td>Concert02</Td>
-                        <Td>$30</Td>
-                        <Td>Vansita</Td>
-                        <Td color={TEXT_COLOR}>
-                            <Link href={`/tickets/asdsd`}>View</Link>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td>Concert03</Td>
-                        <Td>$10</Td>
-                        <Td>Nikhil</Td>
-                        <Td color={TEXT_COLOR}>
-                            <Link href={`/tickets/asdsd`}>View</Link>
-                        </Td>
-                    </Tr>
-                </Tbody>
+                <Tbody>{ticketList}</Tbody>
                 <Tfoot>
                     <Tr>
                         <Th>Ticket Name</Th>
@@ -64,6 +57,17 @@ const Home = () => {
             </Table>
         </TableContainer>
     );
+};
+
+export const getServerSideProps = async ({ req }: NextPageContext) => {
+    const axiosClient = buildClient(req);
+    const { data } = await axiosClient.get('/api/tickets');
+
+    return {
+        props: {
+            tickets: data,
+        },
+    };
 };
 
 export default Home;

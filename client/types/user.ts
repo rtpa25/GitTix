@@ -5,5 +5,5 @@ export interface User {
 }
 
 export interface CurrentUserResult {
-    currentUser: User | null;
+    currentUser: User | null | undefined;
 }

@@ -1,8 +1,8 @@
 import { Box, Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikErrors } from 'formik';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { FormEvent, useState } from 'react';
+import useSWRMutation from 'swr/mutation';
 import InputField from '../../components/input-field';
 import {
     ACCENT_COLOR,
@@ -10,28 +10,50 @@ import {
     BG_COLOR_DARKER,
     TEXT_COLOR,
 } from '../../consts';
-import { useRequest } from '../../hooks/use-request';
+import { User } from '../../types/user';
+import axios from 'axios';
+import { toErrorMap } from '../../utils/to-error-map';
+import { useSWRConfig } from 'swr';
+
+interface SigninRequestBody {
+    arg: {
+        email: string;
+        password: string;
+    };
+}
+
+const signinRequest = async (url: string, { arg }: SigninRequestBody) => {
+    return axios<User>({
+        method: 'post',
+        url: url,
+        data: arg,
+    });
+};
 
 const Signin: NextPage = () => {
     const router = useRouter();
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
 
-    const { doRequest, errors } = useRequest({
-        method: 'post',
-        url: '/api/users/signup',
-        body: {
-            email,
-            password,
-        },
-        onSuccess: () => router.push('/'),
-    });
+    const { mutate } = useSWRConfig();
 
-    const submitHandler = async (e: FormEvent) => {
-        e.preventDefault();
-        await doRequest();
-        setEmail('');
-        setPassword('');
+    const { trigger } = useSWRMutation('/api/users/signin', signinRequest);
+
+    const submitHandler = async (
+        values: { password: string; email: string },
+        setErrors: (
+            errors: FormikErrors<{
+                password: string;
+                email: string;
+            }>
+        ) => void
+    ) => {
+        const { email, password } = values;
+        try {
+            await trigger({ email, password });
+            router.push('/');
+            mutate('/api/users/currentuser');
+        } catch (error: any) {
+            setErrors(toErrorMap(error.response.data.errors));
+        }
     };
 
     return (
@@ -55,7 +77,9 @@ const Signin: NextPage = () => {
             </Heading>
             <Formik
                 initialValues={{ password: '', email: '' }}
-                onSubmit={async (values, { setErrors }) => {}}>
+                onSubmit={async (values, { setErrors }) => {
+                    await submitHandler(values, setErrors);
+                }}>
                 {({ isSubmitting }) => (
                     <Box mx={'10%'}>
                         <Form>

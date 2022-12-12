@@ -3,6 +3,8 @@ export interface Ticket {
     title: string;
     price: number;
     userId: string;
+    username: string;
+    imageUrl: string;
     version: number;
     orderId?: string;
     createdAt: string;
