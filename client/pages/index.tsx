@@ -23,7 +23,7 @@ const Home: NextPage<{ tickets: Ticket[] }> = ({ tickets }) => {
             <Tr key={ticket.id}>
                 <Td>{ticket.title}</Td>
                 <Td>${ticket.price}</Td>
-                <Td>{ticket.username}</Td>
+                <Td>{ticket.creator}</Td>
                 <Td color={TEXT_COLOR}>
                     <Link href={`/tickets/${ticket.id}`}>View</Link>
                 </Td>

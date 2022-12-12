@@ -6,7 +6,7 @@ export interface Order {
     expiresAt: string;
     ticket: Exclude<Ticket, 'username' | 'userId'>;
     userId: string;
-    username: string;
+    creator: string;
     version: number;
     createdAt: string;
     updatedAt: string;

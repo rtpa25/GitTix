@@ -7,9 +7,13 @@ import {
     Link,
     Text,
 } from '@chakra-ui/react';
-import { Form, Formik } from 'formik';
+import axios from 'axios';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { Form, Formik, FormikErrors } from 'formik';
 import { useRouter } from 'next/router';
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
+import useSWRMutation from 'swr/mutation';
+import { v4 } from 'uuid';
 import InputField from '../../components/input-field';
 import {
     ACCENT_COLOR,
@@ -17,44 +21,53 @@ import {
     BG_COLOR_DARKER,
     TEXT_COLOR,
 } from '../../consts';
-import { useRequest } from '../../hooks/use-request';
+import { Ticket } from '../../types/ticket';
+import { storage } from '../../utils/firebase';
+import { toErrorMap } from '../../utils/to-error-map';
+
+interface NewTicketRequestBody {
+    arg: {
+        title: string;
+        price: number;
+        imageUrl: string;
+    };
+}
+
+const newTicketRequest = async (url: string, { arg }: NewTicketRequestBody) => {
+    return axios<Ticket>({
+        method: 'post',
+        url: url,
+        data: arg,
+    });
+};
 
 const NewTicket = () => {
-    const [title, setTitle] = useState('');
-    const [price, setPrice] = useState('');
+    const [imageUrl, setImageUrl] = useState<string>('');
 
     const router = useRouter();
 
-    const { doRequest, errors } = useRequest({
-        method: 'post',
-        url: '/api/tickets',
-        body: {
-            title,
-            price,
-        },
-        onSuccess() {
-            router.push('/');
-        },
-    });
+    const { trigger } = useSWRMutation('/api/tickets', newTicketRequest);
 
-    const submitHandler = async (event: FormEvent) => {
-        event.preventDefault();
+    const submitHandler = async (
+        values: { title: string; price: number },
+        {
+            setErrors,
+        }: {
+            setErrors: (
+                errors: FormikErrors<{
+                    title: string;
+                    price: number;
+                }>
+            ) => void;
+        }
+    ) => {
+        const { title, price } = values;
         try {
-            const data = await doRequest();
-            console.log(data);
-            setPrice('');
-            setTitle('');
-        } catch (error) {
-            console.error(error);
+            const res = await trigger({ title, price, imageUrl });
+            router.push('/');
+        } catch (error: any) {
+            setErrors(toErrorMap(error.response.data.errors));
         }
-    };
-
-    const blurHandler = () => {
-        const value = parseFloat(price);
-        if (isNaN(value)) {
-            return;
-        }
-        setPrice(value.toFixed(2));
     };
 
     return (
@@ -78,10 +91,8 @@ const NewTicket = () => {
             </Heading>
 
             <Formik
-                initialValues={{ title: '', price: 0, imageUrl: '' }}
-                onSubmit={async (values, { setErrors }) => {
-                    console.log(values);
-                }}>
+                initialValues={{ title: '', price: 0 }}
+                onSubmit={submitHandler}>
                 {({ isSubmitting }) => (
                     <Box mx={'10%'}>
                         <Form>
@@ -107,14 +118,27 @@ const NewTicket = () => {
                             </Box>
                             <Box mt={'10'} w='full'>
                                 <Input
-                                    name='imageUrl'
                                     type={'file'}
                                     variant='flushed'
                                     bgColor={'transparent'}
                                     color={ACCENT_COLOR}
                                     onChange={(e) => {
-                                        console.log(e.target.files);
-                                        //TODO process the selected file and host it in firebase cloud storage and convert it into an url and use that in the post request to the ticket server
+                                        const imageRef = ref(
+                                            storage,
+                                            `images/${
+                                                e.target.files![0].name + v4()
+                                            }`
+                                        );
+                                        uploadBytes(
+                                            imageRef,
+                                            e.target.files![0]
+                                        ).then((snapshot) => {
+                                            getDownloadURL(snapshot.ref).then(
+                                                (url) => {
+                                                    setImageUrl(url);
+                                                }
+                                            );
+                                        });
                                     }}
                                 />
                             </Box>
