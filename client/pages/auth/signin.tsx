@@ -1,7 +1,9 @@
 import { Box, Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
+import axios from 'axios';
 import { Form, Formik, FormikErrors } from 'formik';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
+import { useSWRConfig } from 'swr';
 import useSWRMutation from 'swr/mutation';
 import InputField from '../../components/input-field';
 import {
@@ -11,9 +13,7 @@ import {
     TEXT_COLOR,
 } from '../../consts';
 import { User } from '../../types/user';
-import axios from 'axios';
 import { toErrorMap } from '../../utils/to-error-map';
-import { useSWRConfig } from 'swr';
 
 interface SigninRequestBody {
     arg: {

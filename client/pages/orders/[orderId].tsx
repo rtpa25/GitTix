@@ -26,6 +26,7 @@ import {
 import { Order } from '../../types/order';
 import StripeCheckout from 'react-stripe-checkout';
 import { useGetCurrentUser } from '../../hooks/use-get-current-user';
+import { publicStripeKey } from '../../utils/public-stripe-key';
 
 const fetchIndividualOrderRequest = async (url: string) => {
     return axios<Order>({
@@ -158,7 +159,7 @@ const IndividualOrder = () => {
                                 });
                                 console.log(res?.data);
                             }}
-                            stripeKey='pk_test_51MCymRJoGv5A6phSqyE6SsZPyDlIWY2NiyiQ8dnXWjPSG7XSdcglGMuAK5Z3jN1z9V1tpLWoZ1jehSKDeJQDGgog0068jOcebM'
+                            stripeKey={publicStripeKey}
                             amount={data!.data.ticket.price * 100}
                             email={currentUser?.email}>
                             <Button

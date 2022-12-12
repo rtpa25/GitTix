@@ -65,7 +65,7 @@ const NewTicket = () => {
     ) => {
         const { title, price, description } = values;
         try {
-            const res = await trigger({ title, price, imageUrl, description });
+            await trigger({ title, price, imageUrl, description });
             router.push('/');
         } catch (error: any) {
             setErrors(toErrorMap(error.response.data.errors));

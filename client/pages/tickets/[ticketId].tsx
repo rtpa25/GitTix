@@ -14,7 +14,7 @@ import axios from 'axios';
 import { NextPage, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import useSWRMutation from 'swr/mutation';
-import { buildClient } from '../../api/build-client';
+import { buildClient } from '../../utils/build-client';
 import {
     ACCENT_COLOR,
     ACCENT_COLOR_DARK,

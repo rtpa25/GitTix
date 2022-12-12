@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { NextPage, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
-import { buildClient } from '../api/build-client';
+import { buildClient } from '../utils/build-client';
 import {
     ACCENT_COLOR,
     ACCENT_COLOR_DARK,
@@ -32,13 +32,7 @@ const Home: NextPage<{ tickets: Ticket[] }> = ({ tickets }) => {
                     </Heading>
                 </CardHeader>
                 <CardBody>
-                    <Text color={BASE_TEXT_COLOR}>
-                        {ticket.description
-                            ? ticket.description.substring(0, 150).concat('...')
-                            : `
-                            This amazing ticket is waiting for you to buy it, so what are you waiting for? This ticket is sold by ${ticket.creator} and is priced at ${ticket.price} dollars.
-                        `}
-                    </Text>
+                    <Text color={BASE_TEXT_COLOR}>{ticket.description}</Text>
                     <Flex mt={5} alignItems='baseline'>
                         <Text color={BASE_TEXT_COLOR} mr='2'>
                             Creator:
