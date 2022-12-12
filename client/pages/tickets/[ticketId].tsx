@@ -10,7 +10,10 @@ import {
     Stack,
     Text,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import { NextPage, NextPageContext } from 'next';
+import { useRouter } from 'next/router';
+import useSWRMutation from 'swr/mutation';
 import { buildClient } from '../../api/build-client';
 import {
     ACCENT_COLOR,
@@ -19,11 +22,9 @@ import {
     BG_COLOR_DARKER,
     TEXT_COLOR_DARK,
 } from '../../consts';
-import { Ticket } from '../../types/ticket';
-import useSWRMutation from 'swr/mutation';
-import axios from 'axios';
+import { useGetCurrentUser } from '../../hooks/use-get-current-user';
 import { Order } from '../../types/order';
-import { useRouter } from 'next/router';
+import { Ticket } from '../../types/ticket';
 
 interface IndividualTicketRequestBody {
     arg: {
@@ -41,8 +42,11 @@ const individualTicketRequest = async (
         data: arg,
     });
 };
+
 const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
     const router = useRouter();
+
+    const { currentUser } = useGetCurrentUser();
 
     const { createdAt, creator, description, imageUrl, price, title, id } =
         ticket;
@@ -54,6 +58,9 @@ const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
 
     const createOrder = async () => {
         try {
+            if (!currentUser) {
+                return router.replace('/auth/signin?next=' + router.asPath);
+            }
             const res = await trigger({ ticketId: id });
             router.push(`/orders/${res?.data.id}`);
         } catch (error) {
@@ -63,7 +70,7 @@ const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
 
     const errorState = error ? (
         <Text color='red.500' fontSize='lg'>
-            {error.message}
+            {error.response.data.errors[0].message}
         </Text>
     ) : null;
 
@@ -81,7 +88,7 @@ const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
                             <Text color={BASE_TEXT_COLOR} mr='2'>
                                 Creator:
                             </Text>{' '}
-                            <Text color={TEXT_COLOR_DARK}>${creator}</Text>
+                            <Text color={TEXT_COLOR_DARK}>{creator}</Text>
                         </Flex>
                         <Flex justifyContent={'space-between'}>
                             <Flex mt={2} alignItems='baseline' fontSize={'lg'}>
@@ -103,16 +110,21 @@ const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
                 </CardBody>
                 <Divider />
                 <CardFooter>
-                    <Button
-                        onClick={createOrder}
-                        color='gray.300'
-                        isLoading={isMutating}
-                        bgColor={ACCENT_COLOR_DARK}
-                        variant='solid'
-                        _hover={{ bgColor: ACCENT_COLOR }}>
-                        Purchase
-                    </Button>
-                    {errorState}
+                    <Flex
+                        justifyContent={'space-between'}
+                        alignItems='baseline'
+                        w={'full'}>
+                        <Button
+                            onClick={createOrder}
+                            color='gray.300'
+                            isLoading={isMutating}
+                            bgColor={ACCENT_COLOR_DARK}
+                            variant='solid'
+                            _hover={{ bgColor: ACCENT_COLOR }}>
+                            Purchase
+                        </Button>
+                        {errorState}
+                    </Flex>
                 </CardFooter>
             </Card>
         </Flex>

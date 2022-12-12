@@ -49,8 +49,14 @@ const Signin: NextPage = () => {
         const { email, password } = values;
         try {
             await trigger({ email, password });
-            router.push('/');
             mutate('/api/users/currentuser');
+            if (typeof router.query.next === 'string') {
+                console.log(router.query.next);
+
+                router.push(router.query.next);
+            } else {
+                router.push('/');
+            }
         } catch (error: any) {
             setErrors(toErrorMap(error.response.data.errors));
         }

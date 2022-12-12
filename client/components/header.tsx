@@ -1,21 +1,11 @@
-import { FC } from 'react';
-import { CurrentUserResult } from '../types/user';
-import NextLink from 'next/link';
 import { Box, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
+import NextLink from 'next/link';
+import { FC } from 'react';
 import { ACCENT_COLOR, BG_COLOR_DARKER, TEXT_COLOR } from '../consts';
-import useSWR from 'swr';
-import axios from 'axios';
-
-const fetchCurrentUserRequest = async (url: string) => {
-    return axios.get<CurrentUserResult>(url);
-};
+import { useGetCurrentUser } from '../hooks/use-get-current-user';
 
 const Header: FC = () => {
-    const { data, error, isLoading } = useSWR(
-        '/api/users/currentuser',
-        fetchCurrentUserRequest
-    );
-    const currentUser = data?.data?.currentUser;
+    const { currentUser, error, isLoading } = useGetCurrentUser();
 
     const links = [
         !currentUser && { label: 'Sign Up', href: '/auth/signup' },
