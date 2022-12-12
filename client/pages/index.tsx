@@ -43,7 +43,7 @@ const Home: NextPage<{ tickets: Ticket[] }> = ({ tickets }) => {
                         <Text color={BASE_TEXT_COLOR} mr='2'>
                             Creator:
                         </Text>{' '}
-                        <Text color={TEXT_COLOR_DARK}>${ticket.creator}</Text>
+                        <Text color={TEXT_COLOR_DARK}>{ticket.creator}</Text>
                     </Flex>
 
                     <Flex mt={2} alignItems='baseline'>

@@ -1,99 +1,193 @@
 import {
-    Box,
-    Button,
+    Flex,
     Card,
     CardBody,
+    Spinner,
+    Text,
+    Box,
+    Button,
     CardFooter,
     Divider,
-    Flex,
     Heading,
-    Image,
     Stack,
-    Text,
+    Image,
 } from '@chakra-ui/react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
+import useSWRMutation from 'swr/mutation';
 import {
     ACCENT_COLOR,
     ACCENT_COLOR_DARK,
     BG_COLOR_DARKER,
     TEXT_COLOR,
 } from '../../consts';
+import { Order } from '../../types/order';
+import StripeCheckout from 'react-stripe-checkout';
+import { useGetCurrentUser } from '../../hooks/use-get-current-user';
+
+const fetchIndividualOrderRequest = async (url: string) => {
+    return axios<Order>({
+        method: 'get',
+        url: url,
+    });
+};
+
+interface NewPaymentRequestBody {
+    arg: {
+        orderId: string;
+        token: string;
+    };
+}
+
+const newPaymentRequest = async (
+    url: string,
+    { arg }: NewPaymentRequestBody
+) => {
+    return axios({
+        method: 'post',
+        url: url,
+        data: arg,
+    });
+};
 
 const IndividualOrder = () => {
-    // const [timeLeft, setTimeLeft] = useState(0);
+    const router = useRouter();
 
-    // useEffect(() => {
-    //     const findTimeLeft = () => {
-    //         const dateNow = new Date(
-    //             new Date().toLocaleString('en-US', { timeZone: 'UTC' })
-    //         );
+    const [timeLeft, setTimeLeft] = useState(0);
 
-    //         const msLeft =
-    //             new Date(order.expiresAt).getTime() - dateNow.getTime();
+    const orderId = router.query.orderId;
 
-    //         setTimeLeft(Math.round(msLeft / 1000));
-    //     };
-    //     findTimeLeft();
-    //     const timerId = setInterval(findTimeLeft, 1000);
-    //     return () => {
-    //         clearInterval(timerId);
-    //     };
-    // }, [order.expiresAt]);
+    const { currentUser } = useGetCurrentUser();
 
-    return (
+    const { data, error, isLoading } = useSWR(
+        `/api/orders/${orderId}`,
+        fetchIndividualOrderRequest
+    );
+
+    const { trigger } = useSWRMutation('/api/payments', newPaymentRequest);
+
+    useEffect(() => {
+        if (!data) return;
+        const findTimeLeft = () => {
+            const msLeft =
+                new Date(data.data.expiresAt).getTime() - new Date().getTime();
+            setTimeLeft(Math.round(msLeft / 1000));
+        };
+        findTimeLeft();
+        const timerId = setInterval(findTimeLeft, 1000);
+        return () => {
+            clearInterval(timerId);
+        };
+    }, [data]);
+
+    if (timeLeft < 0) {
         <Flex justifyContent={'center'} alignItems='center' py={10}>
             <Card maxW='lg' textColor={'gray.300'} bgColor={BG_COLOR_DARKER}>
                 <CardBody>
-                    <Image
-                        src='https://images.unsplash.com/photo-1609391061565-622f94e736e9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1375&q=80'
-                        alt='Dua Lipa Concert'
-                        borderRadius='lg'
-                    />
-                    <Stack mt='6' spacing='3'>
-                        <Heading size='md' color={ACCENT_COLOR}>
-                            Dua Lipa Concert
-                        </Heading>
-                        <Text>
-                            This is a ticket to the best event in town. You will
-                            have a great time. Lorem ipsum dolor sit amet
-                            consectetur adipisicing elit. Quisquam, quod. Dua
-                            Lipa Lorem ipsum dolor sit amet consectetur
-                            adipisicing elit. Quisquam, quod. Dua Lipa
-                        </Text>
-                        <Text color={TEXT_COLOR} fontSize='2xl'>
-                            $450
-                        </Text>
-                    </Stack>
+                    <Text>
+                        Order Cancelled. Payment window of 15minutes is closed
+                    </Text>
+                    <Text>
+                        Set a new order, if you still want to purchase the
+                        ticket
+                    </Text>
                 </CardBody>
-                <Divider />
-                <CardFooter
-                    justifyContent={'space-between'}
-                    alignItems='baseline'>
+                <CardFooter>
                     <Button
                         color='gray.300'
                         bgColor={ACCENT_COLOR_DARK}
                         variant='solid'
+                        onClick={() => {
+                            router.push('/');
+                        }}
                         _hover={{ bgColor: ACCENT_COLOR }}>
-                        Pay Now
+                        Go Back To Home
                     </Button>
-                    <Box>
-                        <Text color={TEXT_COLOR} fontSize='lg'>
-                            Time Left: 30 sec
-                        </Text>
-                    </Box>
                 </CardFooter>
+            </Card>
+        </Flex>;
+    }
+
+    const renderState = () => {
+        if (isLoading) {
+            return (
+                <CardBody>
+                    <Spinner />
+                </CardBody>
+            );
+        }
+        if (error) {
+            return (
+                <CardBody>
+                    <Text>{error?.response.data.errors[0].message}</Text>
+                </CardBody>
+            );
+        }
+        if (data) {
+            const { ticket } = data.data;
+            return (
+                <>
+                    <CardBody>
+                        <Image
+                            src={ticket.imageUrl}
+                            alt={ticket.title}
+                            borderRadius='lg'
+                        />
+                        <Stack mt='6' spacing='3'>
+                            <Heading size='md' color={ACCENT_COLOR}>
+                                {ticket.title}
+                            </Heading>
+                            <Text>{ticket.description}</Text>
+                            <Text color={TEXT_COLOR} fontSize='2xl'>
+                                ${ticket.price}
+                            </Text>
+                        </Stack>
+                    </CardBody>
+                    <Divider />
+                    <CardFooter
+                        justifyContent={'space-between'}
+                        alignItems='baseline'>
+                        {/*@ts-ignore */}
+                        <StripeCheckout
+                            token={async ({ id }) => {
+                                const res = await trigger({
+                                    orderId: data!.data.id,
+                                    token: id,
+                                });
+                                console.log(res?.data);
+                            }}
+                            stripeKey='pk_test_51MCymRJoGv5A6phSqyE6SsZPyDlIWY2NiyiQ8dnXWjPSG7XSdcglGMuAK5Z3jN1z9V1tpLWoZ1jehSKDeJQDGgog0068jOcebM'
+                            amount={data!.data.ticket.price * 100}
+                            email={currentUser?.email}>
+                            <Button
+                                color='gray.300'
+                                bgColor={ACCENT_COLOR_DARK}
+                                variant='solid'
+                                _hover={{ bgColor: ACCENT_COLOR }}>
+                                Pay Now
+                            </Button>
+                        </StripeCheckout>
+
+                        <Box>
+                            <Text color={TEXT_COLOR} fontSize='lg'>
+                                Time Left: {timeLeft} sec
+                            </Text>
+                        </Box>
+                    </CardFooter>
+                </>
+            );
+        }
+    };
+
+    return (
+        <Flex justifyContent={'center'} alignItems='center' py={10}>
+            <Card maxW='lg' textColor={'gray.300'} bgColor={BG_COLOR_DARKER}>
+                {renderState()}
             </Card>
         </Flex>
     );
 };
-
-// IndividualOrder.getInitialProps = async (
-//     context: NextPageContext,
-//     client: AxiosInstance
-// ) => {
-//     const { orderId } = context.query;
-//     const { data } = await client.get(`/api/orders/${orderId}`);
-
-//     return { order: data };
-// };
 
 export default IndividualOrder;

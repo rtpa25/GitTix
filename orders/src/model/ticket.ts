@@ -40,6 +40,14 @@ const ticketSchema = new mongoose.Schema(
             required: true,
             min: 0,
         },
+        imageUrl: {
+            type: String,
+            required: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
     },
     {
         timestamps: true,
