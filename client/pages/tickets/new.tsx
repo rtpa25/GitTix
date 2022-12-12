@@ -30,6 +30,7 @@ interface NewTicketRequestBody {
         title: string;
         price: number;
         imageUrl: string;
+        description: string;
     };
 }
 
@@ -49,7 +50,7 @@ const NewTicket = () => {
     const { trigger } = useSWRMutation('/api/tickets', newTicketRequest);
 
     const submitHandler = async (
-        values: { title: string; price: number },
+        values: { title: string; price: number; description: string },
         {
             setErrors,
         }: {
@@ -57,13 +58,14 @@ const NewTicket = () => {
                 errors: FormikErrors<{
                     title: string;
                     price: number;
+                    description: string;
                 }>
             ) => void;
         }
     ) => {
-        const { title, price } = values;
+        const { title, price, description } = values;
         try {
-            const res = await trigger({ title, price, imageUrl });
+            const res = await trigger({ title, price, imageUrl, description });
             router.push('/');
         } catch (error: any) {
             setErrors(toErrorMap(error.response.data.errors));
@@ -91,7 +93,7 @@ const NewTicket = () => {
             </Heading>
 
             <Formik
-                initialValues={{ title: '', price: 0 }}
+                initialValues={{ title: '', price: 0, description: '' }}
                 onSubmit={submitHandler}>
                 {({ isSubmitting }) => (
                     <Box mx={'10%'}>
@@ -103,6 +105,17 @@ const NewTicket = () => {
                                     label={'Title'}
                                     type={'text'}
                                     isPassword={false}
+                                    showFormLabel={true}
+                                />
+                            </Box>
+                            <Box mt={4}>
+                                <InputField
+                                    name={'description'}
+                                    placeholder={'description'}
+                                    label={'Description'}
+                                    type={'text'}
+                                    isPassword={false}
+                                    textArea={true}
                                     showFormLabel={true}
                                 />
                             </Box>

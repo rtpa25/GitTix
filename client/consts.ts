@@ -13,3 +13,4 @@ export const TEXT_COLOR_DARKEST = '#5F2600';
 export const TEXT_COLOR_LIGHT = '#FF6F00';
 export const TEXT_COLOR_LIGHTER = '#FF7F00';
 export const TEXT_COLOR_LIGHTEST = '#FF8F00';
+export const BASE_TEXT_COLOR = '#CBD5E0';

@@ -11,6 +11,7 @@ interface TicketBody {
     price: number;
     title: string;
     imageUrl: string;
+    description: string;
 }
 
 router.post(
@@ -22,6 +23,11 @@ router.post(
             .withMessage('title must be valid')
             .notEmpty()
             .withMessage('title is required'),
+        body('description')
+            .isString()
+            .withMessage('description must be valid')
+            .notEmpty()
+            .withMessage('description is required'),
         body('price')
             .isFloat({ gt: 0 })
             .withMessage('price must be valid')
@@ -35,13 +41,14 @@ router.post(
     ],
     validateRequest,
     async (req: Request<{}, {}, TicketBody>, res: Response) => {
-        const { price, title, imageUrl } = req.body;
+        const { price, title, imageUrl, description } = req.body;
         const ticket = Ticket.build({
             price,
             title,
             userId: req.currentUser!.id,
             creator: req.currentUser!.username,
             imageUrl,
+            description,
         });
 
         await ticket.save();
@@ -54,6 +61,7 @@ router.post(
             version: ticket.version,
             creator: ticket.creator,
             imageUrl: ticket.imageUrl,
+            description: ticket.description,
         });
 
         res.status(201).send(ticket);

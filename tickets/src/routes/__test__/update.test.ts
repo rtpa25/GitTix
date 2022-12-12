@@ -14,6 +14,7 @@ it('returns a 404 if the provided id does not exist', async () => {
             title: 'concert',
             price: 20,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         });
     expect(res.statusCode).toEqual(404);
 });
@@ -25,6 +26,7 @@ it('returns a 401 if the user is not authenticated', async () => {
         title: 'concert',
         price: 20,
         imageUrl: 'https://www.google.com',
+        description: 'concert description',
     });
     expect(res.statusCode).toEqual(401);
 });
@@ -37,6 +39,7 @@ it('returns a 401 if the user does not own the ticket', async () => {
             title: 'concert',
             price: 20,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         });
 
     const res = await request(app)
@@ -46,6 +49,7 @@ it('returns a 401 if the user does not own the ticket', async () => {
             title: 'new concert',
             price: 1000,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         });
     expect(res.statusCode).toEqual(401);
 });
@@ -90,6 +94,7 @@ it('updates the ticket provided valid inputs', async () => {
             title: 'concert',
             price: 20,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         });
 
     await request(app)
@@ -99,6 +104,7 @@ it('updates the ticket provided valid inputs', async () => {
             title: 'new concert',
             price: 1000,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         })
         .expect(200);
 
@@ -120,6 +126,7 @@ it('publishes an event', async () => {
             title: 'new concert',
             price: 20,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         });
 
     await request(app)
@@ -129,6 +136,7 @@ it('publishes an event', async () => {
             title: 'new title',
             price: 100,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         })
         .expect(200);
 
@@ -145,6 +153,7 @@ it('rejects updates if the ticket is reserved', async () => {
             title: 'concert',
             price: 20,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         });
 
     const ticket = await Ticket.findById(response.body.id);
@@ -158,6 +167,7 @@ it('rejects updates if the ticket is reserved', async () => {
             title: 'new concert',
             price: 30,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         })
         .expect(400);
 });

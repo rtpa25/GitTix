@@ -13,6 +13,7 @@ const setup = async () => {
         title: 'concert',
         price: 20,
         imageUrl: 'test',
+        description: 'test',
     });
     await ticket.save();
     // Create a fake data object
@@ -24,6 +25,7 @@ const setup = async () => {
         userId: new mongoose.Types.ObjectId().toHexString(),
         creator: 'test',
         imageUrl: 'test',
+        description: 'test',
     };
     // Create a fake message object
     // @ts-ignore

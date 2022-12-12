@@ -8,6 +8,7 @@ it('implements optimistic concurrency control', async () => {
         userId: '123',
         creator: 'Lucifer',
         imageUrl: 'https://www.google.com',
+        description: 'concert description',
     });
 
     // Save the ticket to the database
@@ -39,6 +40,7 @@ it('increments the version number on multiple saves', async () => {
         userId: '123',
         creator: 'Lucifer',
         imageUrl: 'https://www.google.com',
+        description: 'concert description',
     });
 
     await ticket.save();

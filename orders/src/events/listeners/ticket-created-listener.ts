@@ -12,12 +12,13 @@ export class TicketCreatedListener extends Listener<TicketCreatedEvent> {
         data: TicketCreatedEvent['data'],
         msg: Message
     ): Promise<void> {
-        const { title, price, id, imageUrl } = data;
+        const { title, price, id, imageUrl, description } = data;
         const ticket = Ticket.build({
             title,
             price,
             id,
             imageUrl,
+            description,
         });
         await ticket.save();
 

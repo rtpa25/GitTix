@@ -7,6 +7,7 @@ export interface TicketAttrs {
     title: string;
     price: number;
     imageUrl: string;
+    description: string;
 }
 
 export interface TicketDoc extends mongoose.Document {
@@ -14,6 +15,7 @@ export interface TicketDoc extends mongoose.Document {
     price: number;
     imageUrl: string;
     version: number;
+    description: string;
     isReserved(): Promise<boolean>;
     createdAt: string;
     updatedAt: string;

@@ -10,83 +10,127 @@ import {
     Stack,
     Text,
 } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
+import { NextPage, NextPageContext } from 'next';
+import { buildClient } from '../../api/build-client';
 import {
     ACCENT_COLOR,
     ACCENT_COLOR_DARK,
+    BASE_TEXT_COLOR,
     BG_COLOR_DARKER,
-    TEXT_COLOR,
+    TEXT_COLOR_DARK,
 } from '../../consts';
+import { Ticket } from '../../types/ticket';
+import useSWRMutation from 'swr/mutation';
+import axios from 'axios';
+import { Order } from '../../types/order';
+import { useRouter } from 'next/router';
 
-const IndividualTicket = () => {
+interface IndividualTicketRequestBody {
+    arg: {
+        ticketId: string;
+    };
+}
+
+const individualTicketRequest = async (
+    url: string,
+    { arg }: IndividualTicketRequestBody
+) => {
+    return axios<Order>({
+        method: 'post',
+        url: url,
+        data: arg,
+    });
+};
+const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
     const router = useRouter();
 
-    // const { doRequest, errors } = useRequest({
-    //     method: 'post',
-    //     url: '/api/orders',
-    //     body: {
-    //         ticketId: ticket.id,
-    //     },
-    // });
+    const { createdAt, creator, description, imageUrl, price, title, id } =
+        ticket;
 
-    const purchaseTicket = async () => {
+    const { trigger, isMutating, error } = useSWRMutation(
+        `/api/orders`,
+        individualTicketRequest
+    );
+
+    const createOrder = async () => {
         try {
-            // const data = await doRequest();
-            // console.log(data);
-
-            router.push(`/orders/asdsd`);
+            const res = await trigger({ ticketId: id });
+            router.push(`/orders/${res?.data.id}`);
         } catch (error) {
             console.error(error);
         }
     };
 
+    const errorState = error ? (
+        <Text color='red.500' fontSize='lg'>
+            {error.message}
+        </Text>
+    ) : null;
+
     return (
         <Flex justifyContent={'center'} alignItems='center' py={10}>
             <Card maxW='lg' textColor={'gray.300'} bgColor={BG_COLOR_DARKER}>
                 <CardBody>
-                    <Image
-                        src='https://images.unsplash.com/photo-1609391061565-622f94e736e9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1375&q=80'
-                        alt='Dua Lipa Concert'
-                        borderRadius='lg'
-                    />
+                    <Image src={imageUrl} alt={title} borderRadius='lg' />
                     <Stack mt='6' spacing='3'>
-                        <Heading size='md' color={ACCENT_COLOR}>
-                            Dua Lipa Concert
+                        <Heading size='xl' color={ACCENT_COLOR}>
+                            {title}
                         </Heading>
-                        <Text>
-                            This is a ticket to the best event in town. You will
-                            have a great time. Lorem ipsum dolor sit amet
-                            consectetur adipisicing elit. Quisquam, quod. Dua
-                            Lipa Lorem ipsum dolor sit amet consectetur
-                            adipisicing elit. Quisquam, quod. Dua Lipa
-                        </Text>
-                        <Text color={TEXT_COLOR} fontSize='2xl'>
-                            $450
-                        </Text>
+                        <Text>{description}</Text>
+                        <Flex mt={5} alignItems='baseline' fontSize={'lg'}>
+                            <Text color={BASE_TEXT_COLOR} mr='2'>
+                                Creator:
+                            </Text>{' '}
+                            <Text color={TEXT_COLOR_DARK}>${creator}</Text>
+                        </Flex>
+                        <Flex justifyContent={'space-between'}>
+                            <Flex mt={2} alignItems='baseline' fontSize={'lg'}>
+                                <Text color={BASE_TEXT_COLOR} mr='2'>
+                                    Price:
+                                </Text>{' '}
+                                <Text color={TEXT_COLOR_DARK}>${price}</Text>
+                            </Flex>
+                            <Flex mt={2} alignItems='baseline' fontSize={'lg'}>
+                                <Text color={BASE_TEXT_COLOR} mr='2'>
+                                    CreatedAt:
+                                </Text>{' '}
+                                <Text color={TEXT_COLOR_DARK}>
+                                    {new Date(createdAt).toLocaleDateString()}
+                                </Text>
+                            </Flex>
+                        </Flex>
                     </Stack>
                 </CardBody>
                 <Divider />
                 <CardFooter>
                     <Button
-                        onClick={purchaseTicket}
+                        onClick={createOrder}
                         color='gray.300'
+                        isLoading={isMutating}
                         bgColor={ACCENT_COLOR_DARK}
                         variant='solid'
                         _hover={{ bgColor: ACCENT_COLOR }}>
                         Purchase
                     </Button>
+                    {errorState}
                 </CardFooter>
             </Card>
         </Flex>
     );
 };
 
-// IndividualTicket.getInitialProps = async (
-//     context: NextPageContext,
-//     client: any
-// ) => {
-//     const { data } = await client.get(`/api/tickets/${context.query.ticketId}`);
-//     return { ticket: data };
-// };
+export const getServerSideProps = async ({ req, query }: NextPageContext) => {
+    const { ticketId } = query;
+
+    const axiosClient = buildClient(req);
+
+    const { data } = await axiosClient.get(`/api/tickets/${ticketId}`);
+
+    return {
+        props: {
+            ticket: data,
+        },
+    };
+};
 
 export default IndividualTicket;

@@ -4,6 +4,7 @@ export interface Ticket {
     price: number;
     userId: string;
     creator: string;
+    description: string;
     imageUrl: string;
     version: number;
     orderId?: string;

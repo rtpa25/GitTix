@@ -1,61 +1,84 @@
 import {
-    Table,
-    TableCaption,
-    TableContainer,
-    Tbody,
-    Td,
-    Tfoot,
-    Th,
-    Thead,
-    Tr,
-    Link,
+    Button,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    Flex,
+    Heading,
+    SimpleGrid,
+    Text,
 } from '@chakra-ui/react';
 import { NextPage, NextPageContext } from 'next';
+import { useRouter } from 'next/router';
 import { buildClient } from '../api/build-client';
-import { TEXT_COLOR } from '../consts';
+import {
+    ACCENT_COLOR,
+    ACCENT_COLOR_DARK,
+    BASE_TEXT_COLOR,
+    BG_COLOR_DARKER,
+    TEXT_COLOR_DARK,
+} from '../consts';
 import { Ticket } from '../types/ticket';
 
 const Home: NextPage<{ tickets: Ticket[] }> = ({ tickets }) => {
-    console.log(tickets);
-
+    const router = useRouter();
     const ticketList = tickets.map((ticket) => {
         return (
-            <Tr key={ticket.id}>
-                <Td>{ticket.title}</Td>
-                <Td>${ticket.price}</Td>
-                <Td>{ticket.creator}</Td>
-                <Td color={TEXT_COLOR}>
-                    <Link href={`/tickets/${ticket.id}`}>View</Link>
-                </Td>
-            </Tr>
+            <Card key={ticket.id} backgroundColor={BG_COLOR_DARKER}>
+                <CardHeader>
+                    <Heading size='md' color={ACCENT_COLOR}>
+                        {ticket.title}
+                    </Heading>
+                </CardHeader>
+                <CardBody>
+                    <Text color={BASE_TEXT_COLOR}>
+                        {ticket.description
+                            ? ticket.description.substring(0, 150).concat('...')
+                            : `
+                            This amazing ticket is waiting for you to buy it, so what are you waiting for? This ticket is sold by ${ticket.creator} and is priced at ${ticket.price} dollars.
+                        `}
+                    </Text>
+                    <Flex mt={5} alignItems='baseline'>
+                        <Text color={BASE_TEXT_COLOR} mr='2'>
+                            Creator:
+                        </Text>{' '}
+                        <Text color={TEXT_COLOR_DARK}>${ticket.creator}</Text>
+                    </Flex>
+
+                    <Flex mt={2} alignItems='baseline'>
+                        <Text color={BASE_TEXT_COLOR} mr='2'>
+                            Price:
+                        </Text>{' '}
+                        <Text color={TEXT_COLOR_DARK}>${ticket.price}</Text>
+                    </Flex>
+                </CardBody>
+                <CardFooter>
+                    <Button
+                        onClick={() => {
+                            router.push(`/tickets/${ticket.id}`);
+                        }}
+                        variant={'outline'}
+                        textColor={ACCENT_COLOR_DARK}
+                        borderColor={ACCENT_COLOR_DARK}
+                        _hover={{
+                            backgroundColor: ACCENT_COLOR_DARK,
+                            color: 'black',
+                        }}>
+                        View Details
+                    </Button>
+                </CardFooter>
+            </Card>
         );
     });
 
     return (
-        <TableContainer m={['0', '3', '6', '10']}>
-            <Table textColor={'white'}>
-                <TableCaption>
-                    List of all available tickets by users
-                </TableCaption>
-                <Thead>
-                    <Tr>
-                        <Th>Ticket Name</Th>
-                        <Th>Price</Th>
-                        <Th>Username</Th>
-                        <Th>View Ticket</Th>
-                    </Tr>
-                </Thead>
-                <Tbody>{ticketList}</Tbody>
-                <Tfoot>
-                    <Tr>
-                        <Th>Ticket Name</Th>
-                        <Th>Price</Th>
-                        <Th>Username</Th>
-                        <Th>View Ticket</Th>
-                    </Tr>
-                </Tfoot>
-            </Table>
-        </TableContainer>
+        <SimpleGrid
+            m={['0', '3', '6', '7']}
+            spacing={'16'}
+            templateColumns='repeat(auto-fill, minmax(200px, 1fr))'>
+            {ticketList}
+        </SimpleGrid>
     );
 };
 

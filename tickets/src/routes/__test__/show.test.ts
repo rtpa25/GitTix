@@ -13,6 +13,7 @@ it('returns the ticket if the ticket is found', async () => {
     const title = 'concert';
     const price = 20;
     const imageUrl = 'https://www.google.com';
+    const description = 'concert description';
 
     const response = await request(app)
         .post('/api/tickets')
@@ -21,6 +22,7 @@ it('returns the ticket if the ticket is found', async () => {
             title,
             price,
             imageUrl,
+            description,
         });
     expect(response.statusCode).toEqual(201);
 

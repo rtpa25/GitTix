@@ -9,6 +9,7 @@ const createTicket = () => {
             title: 'concert',
             price: 20,
             imageUrl: 'https://www.google.com',
+            description: 'concert description',
         });
 };
 

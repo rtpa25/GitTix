@@ -18,6 +18,7 @@ interface TicketBody {
     price: number;
     title: string;
     imageUrl: string;
+    description: string;
 }
 
 router.put(
@@ -29,6 +30,11 @@ router.put(
             .withMessage('title must be valid')
             .notEmpty()
             .withMessage('title is required'),
+        body('description')
+            .isString()
+            .withMessage('description must be valid')
+            .notEmpty()
+            .withMessage('description is required'),
         body('price')
             .isFloat({ gt: 0 })
             .withMessage('price must be valid')
@@ -60,12 +66,13 @@ router.put(
             throw new NotAuthorizedError();
         }
 
-        const { imageUrl, price, title } = req.body;
+        const { imageUrl, price, title, description } = req.body;
 
         ticket.set({
             title,
             price,
             imageUrl,
+            description,
         });
 
         await ticket.save();
@@ -78,6 +85,7 @@ router.put(
             version: ticket.version,
             creator: ticket.creator,
             imageUrl: ticket.imageUrl,
+            description: ticket.description,
         });
 
         return res.status(200).send(ticket);

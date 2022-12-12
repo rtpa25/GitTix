@@ -7,6 +7,7 @@ export interface TicketAttrs {
     userId: string;
     creator: string;
     imageUrl: string;
+    description: string;
 }
 
 interface TicketDoc extends mongoose.Document {
@@ -16,6 +17,7 @@ interface TicketDoc extends mongoose.Document {
     imageUrl: string;
     creator: string;
     version: number;
+    description: string;
     orderId?: string;
     createdAt: string;
     updatedAt: string;
@@ -44,6 +46,10 @@ const ticketSchema = new mongoose.Schema(
             required: true,
         },
         imageUrl: {
+            type: String,
+            required: true,
+        },
+        description: {
             type: String,
             required: true,
         },
