@@ -12,12 +12,14 @@ let mongo: MongoMemoryServer;
 global.signin = async () => {
     const email = 'test@test.com';
     const password = 'password';
+    const username = 'test';
 
     const response = await request(app)
         .post('/api/users/signup')
         .send({
             email,
             password,
+            username,
         })
         .expect(201);
 

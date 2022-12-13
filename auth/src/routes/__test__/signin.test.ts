@@ -17,6 +17,7 @@ it('fails when an incorrect password is supplied', async () => {
         .send({
             email: 'ronit@ronit.io',
             password: 'password',
+            username: 'ronit',
         })
         .expect(201);
 
