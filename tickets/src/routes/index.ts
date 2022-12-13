@@ -5,10 +5,24 @@ const router = Router();
 
 router.get(
     '/api/tickets',
-    async (req: Request<{ id: string }>, res: Response) => {
-        const tickets = await Ticket.find({
+    async (
+        req: Request<{}, {}, {}, { userId: string; forProfilePage: boolean }>,
+        res: Response
+    ) => {
+        const { userId, forProfilePage } = req.query;
+
+        const findOptions = {
             orderId: undefined,
-        });
+            userId: userId ? userId : undefined,
+        };
+
+        if (!forProfilePage) {
+            delete findOptions.userId;
+        } else {
+            delete findOptions.orderId;
+        }
+
+        const tickets = await Ticket.find(findOptions);
 
         return res.send(tickets);
     }

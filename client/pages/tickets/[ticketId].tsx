@@ -6,6 +6,7 @@ import {
     Divider,
     Flex,
     Heading,
+    IconButton,
     Image,
     Stack,
     Text,
@@ -25,16 +26,18 @@ import {
 import { useGetCurrentUser } from '../../hooks/use-get-current-user';
 import { Order } from '../../types/order';
 import { Ticket } from '../../types/ticket';
+import { useEffect, useState } from 'react';
+import { AiOutlineEdit } from 'react-icons/ai';
 
-interface IndividualTicketRequestBody {
+interface CreateOrderPostRequestBody {
     arg: {
         ticketId: string;
     };
 }
 
-const individualTicketRequest = async (
+const createOrderPostRequest = async (
     url: string,
-    { arg }: IndividualTicketRequestBody
+    { arg }: CreateOrderPostRequestBody
 ) => {
     return axios<Order>({
         method: 'post',
@@ -46,6 +49,8 @@ const individualTicketRequest = async (
 const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
     const router = useRouter();
 
+    const [isAuthorized, setIsAuthorized] = useState(false);
+
     const { currentUser } = useGetCurrentUser();
 
     const { createdAt, creator, description, imageUrl, price, title, id } =
@@ -53,7 +58,7 @@ const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
 
     const { trigger, isMutating, error } = useSWRMutation(
         `/api/orders`,
-        individualTicketRequest
+        createOrderPostRequest
     );
 
     const createOrder = async () => {
@@ -67,6 +72,13 @@ const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
             console.error(error);
         }
     };
+
+    useEffect(() => {
+        if (!currentUser) return;
+        if (ticket.userId === currentUser?.id) {
+            setIsAuthorized(true);
+        }
+    }, [currentUser, ticket.userId]);
 
     const errorState = error ? (
         <Text color='red.500' fontSize='lg'>
@@ -101,9 +113,7 @@ const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
                                 <Text color={BASE_TEXT_COLOR} mr='2'>
                                     CreatedAt:
                                 </Text>{' '}
-                                <Text color={TEXT_COLOR_DARK}>
-                                    {new Date(createdAt).toLocaleDateString()}
-                                </Text>
+                                <Text color={TEXT_COLOR_DARK}>{createdAt}</Text>
                             </Flex>
                         </Flex>
                     </Stack>
@@ -114,15 +124,30 @@ const IndividualTicket: NextPage<{ ticket: Ticket }> = ({ ticket }) => {
                         justifyContent={'space-between'}
                         alignItems='baseline'
                         w={'full'}>
-                        <Button
-                            onClick={createOrder}
-                            color='gray.300'
-                            isLoading={isMutating}
-                            bgColor={ACCENT_COLOR_DARK}
-                            variant='solid'
-                            _hover={{ bgColor: ACCENT_COLOR }}>
-                            Purchase
-                        </Button>
+                        {isAuthorized ? (
+                            <IconButton
+                                color='gray.300'
+                                isLoading={isMutating}
+                                bgColor={ACCENT_COLOR_DARK}
+                                variant='solid'
+                                onClick={() =>
+                                    router.push(`/tickets/edit/${id}`)
+                                }
+                                _hover={{ bgColor: ACCENT_COLOR }}
+                                aria-label={'edit ticket'}>
+                                <AiOutlineEdit />
+                            </IconButton>
+                        ) : (
+                            <Button
+                                onClick={createOrder}
+                                color='gray.300'
+                                isLoading={isMutating}
+                                bgColor={ACCENT_COLOR_DARK}
+                                variant='solid'
+                                _hover={{ bgColor: ACCENT_COLOR }}>
+                                Purchase
+                            </Button>
+                        )}
                         {errorState}
                     </Flex>
                 </CardFooter>
@@ -136,7 +161,9 @@ export const getServerSideProps = async ({ req, query }: NextPageContext) => {
 
     const axiosClient = buildClient(req);
 
-    const { data } = await axiosClient.get(`/api/tickets/${ticketId}`);
+    const { data } = await axiosClient.get<Ticket>(`/api/tickets/${ticketId}`);
+
+    data.createdAt = new Date(data.createdAt).toLocaleDateString();
 
     return {
         props: {

@@ -26,7 +26,7 @@ import {
 import { useGetCurrentUser } from '../../hooks/use-get-current-user';
 import { Order } from '../../types/order';
 import { publicStripeKey } from '../../utils/public-stripe-key';
-import StripeCheckout from 'react-stripe-checkout';
+import StripeCheckout, { Token } from 'react-stripe-checkout';
 
 const fetchIndividualOrderRequest = async (url: string) => {
     return axios<Order>({
@@ -83,32 +83,50 @@ const IndividualOrder = () => {
         };
     }, [data]);
 
+    const checkoutHandler = async ({ id }: Token): Promise<void> => {
+        try {
+            await trigger({
+                orderId: data!.data.id,
+                token: id,
+            });
+            router.push('/profile');
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     if (timeLeft < 0) {
-        <Flex justifyContent={'center'} alignItems='center' py={10}>
-            <Card maxW='lg' textColor={'gray.300'} bgColor={BG_COLOR_DARKER}>
-                <CardBody>
-                    <Text>
-                        Order Cancelled. Payment window of 15minutes is closed
-                    </Text>
-                    <Text>
-                        Set a new order, if you still want to purchase the
-                        ticket
-                    </Text>
-                </CardBody>
-                <CardFooter>
-                    <Button
-                        color='gray.300'
-                        bgColor={ACCENT_COLOR_DARK}
-                        variant='solid'
-                        onClick={() => {
-                            router.push('/');
-                        }}
-                        _hover={{ bgColor: ACCENT_COLOR }}>
-                        Go Back To Home
-                    </Button>
-                </CardFooter>
-            </Card>
-        </Flex>;
+        return (
+            <Flex justifyContent={'center'} alignItems='center' py={10}>
+                <Card
+                    maxW='lg'
+                    textColor={'gray.300'}
+                    bgColor={BG_COLOR_DARKER}>
+                    <CardBody>
+                        <Text>
+                            Order Cancelled. Payment window of 15minutes is
+                            closed
+                        </Text>
+                        <Text>
+                            Set a new order, if you still want to purchase the
+                            ticket
+                        </Text>
+                    </CardBody>
+                    <CardFooter>
+                        <Button
+                            color='gray.300'
+                            bgColor={ACCENT_COLOR_DARK}
+                            variant='solid'
+                            onClick={() => {
+                                router.push('/');
+                            }}
+                            _hover={{ bgColor: ACCENT_COLOR }}>
+                            Go Back To Home
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </Flex>
+        );
     }
 
     const renderState = () => {
@@ -152,13 +170,7 @@ const IndividualOrder = () => {
                         alignItems='baseline'>
                         {/*@ts-ignore */}
                         <StripeCheckout
-                            token={async ({ id }) => {
-                                const res = await trigger({
-                                    orderId: data!.data.id,
-                                    token: id,
-                                });
-                                console.log(res?.data);
-                            }}
+                            token={checkoutHandler}
                             stripeKey={publicStripeKey}
                             amount={data!.data.ticket.price * 100}
                             email={currentUser?.email}>

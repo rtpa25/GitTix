@@ -1,8 +1,9 @@
-import { Box, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
+import { Box, Flex, Heading, Icon, Link, Spinner } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { FC } from 'react';
 import { ACCENT_COLOR, BG_COLOR_DARKER, TEXT_COLOR } from '../consts';
 import { useGetCurrentUser } from '../hooks/use-get-current-user';
+import { CgProfile } from 'react-icons/cg';
 
 const Header: FC = () => {
     const { currentUser, error, isLoading } = useGetCurrentUser();
@@ -10,8 +11,8 @@ const Header: FC = () => {
     const links = [
         !currentUser && { label: 'Sign Up', href: '/auth/signup' },
         !currentUser && { label: 'Sign In', href: '/auth/signin' },
+        currentUser && { label: 'Profile', href: '/profile' },
         currentUser && { label: 'Sign Out', href: '/auth/signout' },
-        currentUser && { label: 'Sell Tickets', href: '/tickets/new' },
     ];
 
     const loadingState = <Spinner color={TEXT_COLOR} />;
@@ -23,7 +24,13 @@ const Header: FC = () => {
         return (
             <Box key={link.label} mx='3' color={TEXT_COLOR}>
                 <Link fontSize={['sm', 'md', 'lg']} href={link.href}>
-                    {link.label}
+                    {link.label === 'Profile' ? (
+                        <Icon fontSize={'2xl'}>
+                            <CgProfile />
+                        </Icon>
+                    ) : (
+                        link.label
+                    )}
                 </Link>
             </Box>
         );
@@ -56,7 +63,7 @@ const Header: FC = () => {
 
                 <Flex
                     justifyContent={'space-between'}
-                    alignItems='baseline'
+                    alignItems='center'
                     maxW={['40%', '30%', '20%', '15%']}>
                     {renderState()}
                 </Flex>

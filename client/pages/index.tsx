@@ -17,6 +17,7 @@ import {
     ACCENT_COLOR_DARK,
     BASE_TEXT_COLOR,
     BG_COLOR_DARKER,
+    TEXT_COLOR,
     TEXT_COLOR_DARK,
 } from '../consts';
 import { Ticket } from '../types/ticket';
@@ -32,7 +33,9 @@ const Home: NextPage<{ tickets: Ticket[] }> = ({ tickets }) => {
                     </Heading>
                 </CardHeader>
                 <CardBody>
-                    <Text color={BASE_TEXT_COLOR}>{ticket.description}</Text>
+                    <Text color={BASE_TEXT_COLOR}>
+                        {ticket.description.slice(0, 170) + '...'}
+                    </Text>
                     <Flex mt={5} alignItems='baseline'>
                         <Text color={BASE_TEXT_COLOR} mr='2'>
                             Creator:
@@ -67,18 +70,36 @@ const Home: NextPage<{ tickets: Ticket[] }> = ({ tickets }) => {
     });
 
     return (
-        <SimpleGrid
-            m={['0', '3', '6', '7']}
-            spacing={'16'}
-            templateColumns='repeat(auto-fill, minmax(200px, 1fr))'>
-            {ticketList}
-        </SimpleGrid>
+        <>
+            <Flex w={'full'} textAlign='right' justifyContent={'flex-end'}>
+                <Button
+                    mr={7}
+                    onClick={() => {
+                        router.push('/tickets/new');
+                    }}
+                    borderColor={TEXT_COLOR}
+                    variant='outline'
+                    textColor={TEXT_COLOR}
+                    _hover={{
+                        backgroundColor: TEXT_COLOR,
+                        color: 'black',
+                    }}>
+                    Sell Ticket
+                </Button>
+            </Flex>
+            <SimpleGrid
+                m={['0', '3', '6', '7']}
+                spacing={'16'}
+                templateColumns='repeat(auto-fill, minmax(200px, 1fr))'>
+                {ticketList}
+            </SimpleGrid>
+        </>
     );
 };
 
 export const getServerSideProps = async ({ req }: NextPageContext) => {
     const axiosClient = buildClient(req);
-    const { data } = await axiosClient.get('/api/tickets');
+    const { data } = await axiosClient.get<Ticket[]>('/api/tickets');
 
     return {
         props: {

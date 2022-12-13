@@ -13,7 +13,7 @@ import { natsWrapper } from '../nats-wrapper';
 
 const router = Router();
 
-const EXPIRATION_WINDOW_SECONDS = 15 * 60; // 15 minutes
+const EXPIRATION_WINDOW_SECONDS = 1 * 60; // 1 minutes
 
 interface RequestBody {
     ticketId: string;
@@ -50,7 +50,7 @@ router.post(
         // Calculate an expiration date for this order
         const expirationTime = new Date(
             Date.now() + EXPIRATION_WINDOW_SECONDS * 1000
-        ); // 15 minutes
+        ); // 1 minutes
 
         // Build the order and save it to the database
         const order = Order.build({
