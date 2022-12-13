@@ -1,2 +1,2 @@
 export const publicStripeKey =
-    'pk_test_51MCymRJoGv5A6phSqyE6SsZPyDlIWY2NiyiQ8dnXWjPSG7XSdcglGMuAK5Z3jN1z9V1tpLWoZ1jehSKDeJQDGgog0068jOcebM';
+    'pk_test_51MEPE7KybqH6V1luMklEBikkwHqYlRrF8WAK1AeRHSKfJb3fjd7CjpHNZe7VoyLjeUgZL1gfxgYect3ph7ijwOlT00v6NHuCQy';

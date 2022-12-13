@@ -30,7 +30,7 @@ router.post(
     ],
     validateRequest,
     async (
-        req: Request<{}, {}, { token: string; orderId: string }>,
+        req: Request<{}, {}, { orderId: string; token: string }>,
         res: Response
     ) => {
         const { orderId, token } = req.body;
@@ -51,9 +51,8 @@ router.post(
 
         const charge = await stripe.charges.create({
             currency: 'usd',
-            amount: order.price * 100, // Stripe expects amount in cents
+            amount: order.price * 100,
             source: token,
-            description: `Order ID: ${order.id}`,
         });
 
         const payment = Payment.build({
@@ -70,7 +69,9 @@ router.post(
             stripeId: payment.stripeId,
         });
 
-        res.status(201).send({ payment });
+        res.status(201).send({
+            payment,
+        });
     }
 );
 

@@ -1,16 +1,16 @@
 import {
-    Flex,
-    Card,
-    CardBody,
-    Spinner,
-    Text,
     Box,
     Button,
+    Card,
+    CardBody,
     CardFooter,
     Divider,
+    Flex,
     Heading,
-    Stack,
     Image,
+    Spinner,
+    Stack,
+    Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -23,10 +23,10 @@ import {
     BG_COLOR_DARKER,
     TEXT_COLOR,
 } from '../../consts';
-import { Order } from '../../types/order';
-import StripeCheckout from 'react-stripe-checkout';
 import { useGetCurrentUser } from '../../hooks/use-get-current-user';
+import { Order } from '../../types/order';
 import { publicStripeKey } from '../../utils/public-stripe-key';
+import StripeCheckout from 'react-stripe-checkout';
 
 const fetchIndividualOrderRequest = async (url: string) => {
     return axios<Order>({
