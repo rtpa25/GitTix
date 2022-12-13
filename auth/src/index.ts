@@ -11,7 +11,7 @@ const bootstrap = async () => {
     }
     try {
         await mongoose.connect(process.env.MONGO_URI, {});
-        console.log('Connected to MongoDB');
+        console.log('connected to MongoDB');
     } catch (error) {
         console.error(error);
     }
