@@ -6,8 +6,7 @@ export const buildClient = (
 ): AxiosInstance => {
     if (typeof window === 'undefined') {
         return axios.create({
-            baseURL:
-                'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local',
+            baseURL: 'https://www.gittix.ronit.pro/',
             headers: req!.headers,
         });
     } else {
