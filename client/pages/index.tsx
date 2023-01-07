@@ -34,7 +34,7 @@ const Home: NextPage<{ tickets: Ticket[] }> = ({ tickets }) => {
                 </CardHeader>
                 <CardBody>
                     <Text color={BASE_TEXT_COLOR}>
-                        {ticket.description.slice(0, 170) + '...'}
+                        {ticket.description.slice(0, 170) + '....'}
                     </Text>
                     <Flex mt={5} alignItems='baseline'>
                         <Text color={BASE_TEXT_COLOR} mr='2'>
