@@ -6,7 +6,7 @@ export const buildClient = (
 ): AxiosInstance => {
     if (typeof window === 'undefined') {
         return axios.create({
-            baseURL: 'https://www.gittix.ronit.pro/',
+            baseURL: 'https://www.gittix.ronit.pro',
             headers: req!.headers,
         });
     } else {
